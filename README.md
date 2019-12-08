@@ -40,6 +40,9 @@ run node liri.js concert-this with a band name and you will be given information
 * do-what-it-says<br>
 run node liri.js do-what-it-says in the terminal and it will read a file with text already inputted and give you the information on that. 
 
+### Preview Here
+https://drive.google.com/open?id=1_0UPzWXminSbKXXkx3bFgUXr2FGgfcWQ
+
 #### Technologies
 
 1. Javascript
@@ -54,6 +57,8 @@ run node liri.js do-what-it-says in the terminal and it will read a file with te
    - Spotify
    - Bands in town 
    - OMDB
+   
+
    
    ### Created by
    Byanca De La Fuente
