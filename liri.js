@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+fs = require('fs');
+
 var keys = require("./keys.js");
 
 var axios = require("axios")
@@ -8,23 +10,29 @@ var Spotify = require("node-spotify-api");
 
 var spotify = new Spotify(keys.spotify);
 
+let moment = require('moment');
+
+
+
 let command = process.argv[2];
 let value = process.argv.slice(3).join(" ");
-// let value = process.argv[3];
-
-switch(command){
+let go = function(command, title) {
+    switch(command){
     case 'movie-this': 
-        movie();
-    break;
+        movie(title);
+        break;
     case 'spotify-this-song':
-        song();
-    break;
+        song(title);
+        break;
     case 'concert-this':
-        show();
-    break;
+        show(title);
+        break;
+    case 'do-what-it-says':
+        fixed();
+        break;
 }
-
-function movie(){
+}
+function movie(value='Mr.Nobody'){
     let queryUrl = "http://www.omdbapi.com/?apikey=trilogy&t=" + value; 
     axios.get(queryUrl)
     .then(function(response){
@@ -44,38 +52,70 @@ function movie(){
    
 }
 
-function show(){
+function show(value){
     let queryUrl = "http://rest.bandsintown.com/artists/" + value + "/events?app_id=codingbootcamp"
     axios.get(queryUrl)
         .then(function(response){
-            let jsonData = response.data[0];
-            console.log(jsonData)
+           
+        for(i = 0; i < response.data.length; i++){
+            let jsonData = response.data[i];
+            jsonData.datetime = moment(jsonData.datetime).format('MMMM Do YYYY, h:mm:ss a');
             let showData = [
                 "Venue Name: " + jsonData.venue.name,
-                "Venue Location: " + jsonData.venue.city
+                "Venue Location: " + jsonData.venue.city,
+                "Date: " + jsonData.datetime,
+                "--------------------------"
             ].join('\n\n')
             console.log(showData);
+            }
         })
+    
         
 }
 
-function song(response){
-  spotify.search({ type: 'track', query: value }, function(err, data) {
+function song(value){ 
+    let title;
+    if(!value){
+        title = "Ace of Base"
+    } else { title = value }
+    console.log(value)
+  spotify.search({ type: 'track', query: title }, function(err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
-      console.log(response.data)
+     
     }
    
       
-    
+    // let artists = data.tracks.items.artist;
     let songs = data.tracks.items;
+
     for(let i = 0; i < songs.length; i++){
+      
         console.log('song name: ' + songs[i].name);
-        console.log('artist name: ' + songs[i].artist);
+        console.log('artist name: ' +  songs[i].album.artists[0].name);
         console.log('album name: ' + songs[i].album.name);
         console.log('preview song: ' + songs[i].preview_url);
         console.log('-------------------------------------------');
     }
   });
 }
+
+function fixed(){
+    fs.readFile('random.txt', 'utf8', function(err, data){
+        if (err) throw err;
+        console.log(data)
+        let dataArr = data.split(',');
+        let command=dataArr[0];
+        let title=dataArr[1];
+        console.log(dataArr)
+        if (dataArr.length == 2){
+            go(command, title);
+        } else if (dataArr.length == 1){
+        go(dataArr[0]);
+        }
+    });
+}
+
+
+go(command,value);
    
