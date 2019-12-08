@@ -32,8 +32,13 @@ let go = function(command, title) {
         break;
 }
 }
-function movie(value='Mr.Nobody'){
-    let queryUrl = "http://www.omdbapi.com/?apikey=trilogy&t=" + value; 
+function movie(value){
+    let title;
+    if(!value){
+        title = "Mr.Nobody"
+    } else { title = value }
+    console.log(value)
+    let queryUrl = "http://www.omdbapi.com/?apikey=trilogy&t=" + title; 
     axios.get(queryUrl)
     .then(function(response){
         console.log('Title: ' + response.data.Title);
